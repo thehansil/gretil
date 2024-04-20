@@ -1,20 +1,26 @@
-import * as dotenv from 'dotenv';
+import * as dotenv from "dotenv";
 dotenv.config();
-import * as fs from 'node:fs';
-import * as path from 'node:path';
-import { Client, Collection, Events, GatewayIntentBits , IntentsBitField  } from 'discord.js';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import * as fs from "node:fs";
+import * as path from "node:path";
+import {
+  Client,
+  Collection,
+  Events,
+  GatewayIntentBits,
+  IntentsBitField,
+} from "discord.js";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({
-	intents: [
-		IntentsBitField.Flags.Guilds,
-		IntentsBitField.Flags.GuildMembers,
-		IntentsBitField.Flags.GuildMessages,
-		IntentsBitField.Flags.MessageContent,
-	],
+  intents: [
+    IntentsBitField.Flags.Guilds,
+    IntentsBitField.Flags.GuildMembers,
+    IntentsBitField.Flags.GuildMessages,
+    IntentsBitField.Flags.MessageContent,
+  ],
 });
 /**
 import * as commands from 'commands/*';
@@ -36,20 +42,28 @@ for (const file of commandFiles) {
 	}
 }
  */
-client.on('ready', (c) => {
-  console.log(`Logged in as ${c.user.tag}!`)
-})
-
-client.once(Events.ClientReady, c => {
-	console.log(`✅ Ready! Logged in as ${c.user.tag}`);
+client.on("ready", (c) => {
+  console.log(`Logged in as ${c.user.tag}!`);
 });
 
-client.on('messageCreate', (message) => {
-	if (message.author.bot) { return; }
+client.once(Events.ClientReady, (c) => {
+  console.log(`✅ Ready! Logged in as ${c.user.tag}`);
+});
 
-	if (message.content?.toLowerCase() === 'hello') {
-		message.reply('Hi!');
-	}
-})
+client.on("messageCreate", (message) => {
+  if (message.author.bot) return;
 
-client.login(process.env.TOKEN)
+  if (message.content?.toLowerCase() === "hello") {
+    message.reply("Hi!");
+  }
+});
+
+client.on("interactionCreate", (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === "hey") {
+    interaction.reply("Hi!");
+  }
+});
+
+client.login(process.env.TOKEN);
