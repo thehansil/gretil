@@ -1,11 +1,19 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import { REST, Routes } from "discord.js";
+import { REST, Routes, ApplicationCommandOptionType } from "discord.js";
 
 const commands = [
   {
-    name: "hey",
-    description: "Replies with hey!",
+    name: "update-channel-names",
+    description: "Updates the channel names of the server",
+    options: [
+      {
+        name: "names",
+        description: "Comma separated channel names.",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      },
+    ],
   },
 ];
 
@@ -25,6 +33,6 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
     console.log("Slash commands were registered successfully.");
   } catch (error) {
-    console.log(`There was an error: ${error}`);
+    console.error(`There was an error: ${error}`);
   }
 })();

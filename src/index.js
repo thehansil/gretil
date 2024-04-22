@@ -1,49 +1,19 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-import * as fs from "node:fs";
-import * as path from "node:path";
-import {
-  Client,
-  Collection,
-  Events,
-  GatewayIntentBits,
-  IntentsBitField,
-} from "discord.js";
+import { Client, Events, GatewayIntentBits, Guild, ChannelType } from "discord.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { channel } from "node:diagnostics_channel";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({
   intents: [
-    IntentsBitField.Flags.Guilds,
-    IntentsBitField.Flags.GuildMembers,
-    IntentsBitField.Flags.GuildMessages,
-    IntentsBitField.Flags.MessageContent,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
   ],
-});
-/**
-import * as commands from 'commands/*';
-
-
-client.commands = new Collection();
-
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-
-for (const file of commandFiles) {
-	const filePath = path.join(commandsPath, file);
-	const command = require(filePath);
-	// Set a new item in the Collection with the key as the command name and the value as the exported module
-	if ('data' in command && 'execute' in command) {
-		client.commands.set(command.data.name, command);
-	} else {
-		console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-	}
-}
- */
-client.on("ready", (c) => {
-  console.log(`Logged in as ${c.user.tag}!`);
 });
 
 client.once(Events.ClientReady, (c) => {
@@ -63,6 +33,31 @@ client.on("interactionCreate", (interaction) => {
 
   if (interaction.commandName === "hey") {
     interaction.reply("Hi!");
+  }
+
+  if (interaction.commandName === "update-channel-names") {
+    let newNames = interaction.options.get("names").value;
+    if (newNames !== null && newNames.includes(",")) {
+      newNames = newNames.split(",");
+      let allChannels = client.guilds.cache.get(process.env.GUILD_ID).channels.cache;
+      let voiceChannels = allChannels.filter((c) => c.type === ChannelType.GuildVoice);
+      voiceChannels.forEach((channel) => {
+        let i = 0;
+        console.log(`Old Name: ${channel.name} - New Name: ${newNames[i]}`);
+        channel.setName(newNames[i]);
+        console.log(`New Name: ${channel.name}`);
+        i++;
+      });
+      interaction.reply({
+        content: "Channel names updated!",
+        ephemeral: true,
+      });
+    } else {
+      interaction.reply({
+        content: "The channel names given need to have a ',' between each name",
+        ephemeral: true,
+      });
+    }
   }
 });
 
