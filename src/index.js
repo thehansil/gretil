@@ -1,11 +1,6 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import { Client, Events, GatewayIntentBits, Guild, ChannelType } from "discord.js";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
-import { channel } from "node:diagnostics_channel";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const client = new Client({
   intents: [
