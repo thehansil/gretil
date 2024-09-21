@@ -4,12 +4,30 @@ import { REST, Routes, ApplicationCommandOptionType } from "discord.js";
 
 const commands = [
    {
+      name: "update-channel-name",
+      description: "Updates the channel name of the server",
+      options: [
+         {
+            name: "name",
+            description: "Channel name",
+            type: ApplicationCommandOptionType.String,
+            required: true,
+         },
+         {
+            name: "number",
+            description: "Voice channel number",
+            type: ApplicationCommandOptionType.String,
+            required: true,
+         },
+      ],
+   },
+   {
       name: "update-channel-names",
-      description: "Updates the channel names of the server",
+      description: "Updates the channel names of the server based on comma separated list",
       options: [
          {
             name: "names",
-            description: "Comma separated channel names.",
+            description: "Channel names",
             type: ApplicationCommandOptionType.String,
             required: true,
          },

@@ -25,6 +25,16 @@ client.on("messageCreate", (message) => {
 
 client.on("interactionCreate", (interaction) => {
    if (!interaction.isChatInputCommand()) return;
+   if (interaction.commandName === "update-channel-name") {
+      let newName = interaction.options.get("name").value;
+      let channelNum = interaction.options.get("number").value;
+      let voiceChannels = client.guilds.cache
+         .get(process.env.GUILD_ID)
+         .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
+      if (newName !== null) {
+         voiceChannels.at(channelNum - 1).setName(newName);
+      }
+   }
 
    if (interaction.commandName === "update-channel-names") {
       let newNames = interaction.options.get("names").value;
@@ -33,12 +43,18 @@ client.on("interactionCreate", (interaction) => {
          let voiceChannels = client.guilds.cache
             .get(process.env.GUILD_ID)
             .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
-         //.map((c) => c.id);
-         // console.log(voiceChannels);
-         voiceChannels.forEach((channel, i) => {
-            console.log(`Old Name: ${channel.name} - New Name: ${newNames[i]}`);
-            channel.setName(newNames[0]);
-         });
+         if (newNames.length !== voiceChannels.size) {
+            interaction.reply({
+               content: "An incorrect number of channel names were provided",
+               ephemeral: true,
+            });
+            return;
+         }
+
+         voiceChannels = Array.from(voiceChannels.values());
+         for (let i = 0; i < voiceChannels.length; i++) {
+            voiceChannels[i].setName(newNames[i]);
+         }
 
          interaction.reply({
             content: "Channel names updated!",
