@@ -33,6 +33,10 @@ client.on("interactionCreate", (interaction) => {
          .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
       if (newName !== null) {
          voiceChannels.at(channelNum - 1).setName(newName);
+         interaction.reply({
+            content: "Channel name updated!",
+            ephemeral: true,
+         });
       }
    }
 
