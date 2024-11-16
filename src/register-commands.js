@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import * as dotenv from "@dotenvx/dotenvx";
 dotenv.config();
 import { REST, Routes, ApplicationCommandOptionType } from "discord.js";
 
