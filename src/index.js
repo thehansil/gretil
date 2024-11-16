@@ -1,4 +1,4 @@
-import * as dotenv from "dotenv";
+import * as dotenv from "@dotenvx/dotenvx";
 dotenv.config();
 import { Client, Events, GatewayIntentBits, Guild, ChannelType } from "discord.js";
 
