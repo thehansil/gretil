@@ -76,9 +76,9 @@ client.on("interactionCreate", async (interaction) => {
          try {
             // Fetch the last message in the channel
             const messages = await channel.messages
-               .fetch()
+               .fetch({ cache: false })
                .then((messages) =>
-                  messages.filter((message) => message.author.id === process.env.APP_ID)
+                  messages.filter((message) => message.author.id === process.env.CLIENT_ID)
                )
                .catch(console.error);
             const lastMessage = messages.first();
@@ -88,8 +88,22 @@ client.on("interactionCreate", async (interaction) => {
                //array of all numbers found
                const numbers = lastMessage.content.match(/\d+/g);
                if (numbers) {
-                  const lastChapter = Number(numbers[0]);
-                  interaction.reply(`Chapter #${lastChapter + 1} discussion thread 🔔`);
+                  const nextChapter = Number(numbers[0]) + 1;
+                  const reply = await interaction.reply({
+                     content: `Chapter #${nextChapter} discussion thread 🔔`,
+                     fetchReply: true,
+                  });
+
+                  //const replyMsg = await channel.messages.fetch({ message: reply.id, force: true });
+                  //Start a thread and add a comment
+                  const thread = await reply.startThread({
+                     name: `Chapter #${nextChapter} Discussion Thread`,
+                     autoArchiveDuration: 10080, // Auto-archive duration in minutes (can be 60, 1440, 4320, or 10080)
+                     reason: "Starting a thread for discussion",
+                  });
+
+                  // Send a message in the thread
+                  await thread.send("What a chapter...");
                } else {
                   interaction.reply({
                      content: "There was an issue finding the chapter # in the previous message",
