@@ -94,15 +94,13 @@ client.on("interactionCreate", async (interaction) => {
                      fetchReply: true,
                   });
 
-                  //const replyMsg = await channel.messages.fetch({ message: reply.id, force: true });
                   //Start a thread and add a comment
                   const thread = await reply.startThread({
                      name: `Chapter #${nextChapter} Discussion Thread`,
-                     autoArchiveDuration: 10080, // Auto-archive duration in minutes (can be 60, 1440, 4320, or 10080)
+                     autoArchiveDuration: 10080,
                      reason: "Starting a thread for discussion",
                   });
 
-                  // Send a message in the thread
                   await thread.send("What a chapter...");
                } else {
                   interaction.reply({
@@ -118,7 +116,7 @@ client.on("interactionCreate", async (interaction) => {
 
                const thread = await reply.startThread({
                   name: "Chapter #1 Discussion Thread",
-                  autoArchiveDuration: 10080, // Auto-archive duration in minutes (can be 60, 1440, 4320, or 10080)
+                  autoArchiveDuration: 10080,
                   reason: "Starting a thread for discussion",
                });
                await thread.send("What a chapter...");
