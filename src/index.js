@@ -75,8 +75,13 @@ client.on("interactionCreate", async (interaction) => {
          const channel = interaction.channel;
          try {
             // Fetch the last message in the channel
-            const messages = await channel.messages.fetch({ limit: 1 });
-            const lastMessage = messages.first(); // Get the most recent message
+            const messages = await channel.messages
+               .fetch()
+               .then((messages) =>
+                  messages.filter((message) => message.author.id === process.env.APP_ID)
+               )
+               .catch(console.error);
+            const lastMessage = messages.first();
 
             if (lastMessage) {
                //[season 2] Ep. 121 won't work, but #312 will
