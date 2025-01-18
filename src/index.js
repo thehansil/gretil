@@ -79,7 +79,6 @@ client.on("interactionCreate", async (interaction) => {
             const lastMessage = messages.first(); // Get the most recent message
 
             if (lastMessage) {
-               console.log(`Last message content: ${lastMessage.content}`);
                //[season 2] Ep. 121 won't work, but #312 will
                //array of all numbers found
                const numbers = lastMessage.content.match(/\d+/g);
@@ -87,16 +86,23 @@ client.on("interactionCreate", async (interaction) => {
                   const lastChapter = Number(numbers[0]);
                   interaction.reply(`Chapter #${lastChapter + 1} discussion thread 🔔`);
                } else {
-                  interaction.reply(
-                     "There was an issue finding the chapter # in the previous message"
-                  );
+                  interaction.reply({
+                     content: "There was an issue finding the chapter # in the previous message",
+                     ephemeral: true,
+                  });
                }
             } else {
-               interaction.reply("There are no messages in this channel yet.");
+               interaction.reply({
+                  content: "There are no messages in this channel yet.",
+                  ephemeral: true,
+               });
             }
          } catch (error) {
             console.error("Error fetching messages:", error);
-            interaction.reply("Failed to fetch the last message in this channel.");
+            interaction.reply({
+               content: "Failed to fetch the last message in this channel.",
+               ephemeral: true,
+            });
          }
       } else {
          interaction.reply({
