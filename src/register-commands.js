@@ -33,6 +33,10 @@ const commands = [
          },
       ],
    },
+   {
+      name: "tog-new",
+      description: "Creates a new channel message for discussion threads",
+   },
 ];
 
 const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);

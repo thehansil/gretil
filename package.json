@@ -7,7 +7,8 @@
       "test": "echo \"Error: no test specified\" && exit 1",
       "start": "node .",
       "debug": "nodemon",
-      "prod": "dotenvx run -f .env.production -- node src/index.js"
+      "prod": "dotenvx run -f .env.production -- node src/index.js",
+      "upload-commands": "node src/register-commands.js"
    },
    "keywords": [],
    "author": "",

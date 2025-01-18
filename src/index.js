@@ -23,7 +23,7 @@ client.on("messageCreate", (message) => {
    }
 });
 
-client.on("interactionCreate", (interaction) => {
+client.on("interactionCreate", async (interaction) => {
    if (!interaction.isChatInputCommand()) return;
    if (interaction.commandName === "update-channel-name") {
       let newName = interaction.options.get("name").value;
@@ -38,9 +38,7 @@ client.on("interactionCreate", (interaction) => {
             ephemeral: true,
          });
       }
-   }
-
-   if (interaction.commandName === "update-channel-names") {
+   } else if (interaction.commandName === "update-channel-names") {
       let newNames = interaction.options.get("names").value;
       if (newNames !== null && newNames.includes(",")) {
          newNames = newNames.split(",");
@@ -67,6 +65,42 @@ client.on("interactionCreate", (interaction) => {
       } else {
          interaction.reply({
             content: "The channel names given need to have a ',' between each name",
+            ephemeral: true,
+         });
+      }
+   } else if (interaction.commandName === "tog-new") {
+      //make sure this was sent in the right channel
+      if (interaction.channel.name === "tog") {
+         //find what the last chapter was by viewing last message
+         const channel = interaction.channel;
+         try {
+            // Fetch the last message in the channel
+            const messages = await channel.messages.fetch({ limit: 1 });
+            const lastMessage = messages.first(); // Get the most recent message
+
+            if (lastMessage) {
+               console.log(`Last message content: ${lastMessage.content}`);
+               //[season 2] Ep. 121 won't work, but #312 will
+               //array of all numbers found
+               const numbers = lastMessage.content.match(/\d+/g);
+               if (numbers) {
+                  const lastChapter = Number(numbers[0]);
+                  interaction.reply(`Chapter #${lastChapter + 1} discussion thread 🔔`);
+               } else {
+                  interaction.reply(
+                     "There was an issue finding the chapter # in the previous message"
+                  );
+               }
+            } else {
+               interaction.reply("There are no messages in this channel yet.");
+            }
+         } catch (error) {
+            console.error("Error fetching messages:", error);
+            interaction.reply("Failed to fetch the last message in this channel.");
+         }
+      } else {
+         interaction.reply({
+            content: "This is not the right channel for this command. Please send in #tog",
             ephemeral: true,
          });
       }
