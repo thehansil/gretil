@@ -111,10 +111,17 @@ client.on("interactionCreate", async (interaction) => {
                   });
                }
             } else {
-               interaction.reply({
-                  content: "There are no messages in this channel yet.",
-                  ephemeral: true,
+               const reply = await interaction.reply({
+                  content: "Chapter #1 discussion thread 🔔",
+                  fetchReply: true,
                });
+
+               const thread = await reply.startThread({
+                  name: "Chapter #1 Discussion Thread",
+                  autoArchiveDuration: 10080, // Auto-archive duration in minutes (can be 60, 1440, 4320, or 10080)
+                  reason: "Starting a thread for discussion",
+               });
+               await thread.send("What a chapter...");
             }
          } catch (error) {
             console.error("Error fetching messages:", error);
