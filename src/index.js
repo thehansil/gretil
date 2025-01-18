@@ -76,7 +76,7 @@ client.on("interactionCreate", async (interaction) => {
          try {
             // Fetch the last message in the channel
             const messages = await channel.messages
-               .fetch({ cache: false })
+               .fetch()
                .then((messages) =>
                   messages.filter((message) => message.author.id === process.env.CLIENT_ID)
                )
