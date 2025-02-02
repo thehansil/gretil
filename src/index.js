@@ -90,7 +90,7 @@ client.on("interactionCreate", async (interaction) => {
                if (numbers) {
                   const nextChapter = Number(numbers[0]) + 1;
                   const reply = await interaction.reply({
-                     content: `Chapter #${nextChapter} discussion thread 🔔`,
+                     content: `Chapter #${nextChapter} Discussion Thread 🔔`,
                      fetchReply: true,
                   });
 
@@ -110,7 +110,7 @@ client.on("interactionCreate", async (interaction) => {
                }
             } else {
                const reply = await interaction.reply({
-                  content: "Chapter #1 discussion thread 🔔",
+                  content: "Chapter #1 Discussion Thread 🔔",
                   fetchReply: true,
                });
 
