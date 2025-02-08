@@ -21,6 +21,15 @@ client.on("messageCreate", (message) => {
    if (message.content?.toLowerCase() === "hello") {
       message.reply("Hi!");
    }
+
+   if (
+      message.content?.includes("https://x.com") ||
+      message.content?.includes("https://twitter.com")
+   ) {
+      const twitterRegex = /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
+      const newMessage = message.content.replace(twitterRegex, "https://xcancel.com$3");
+      message.channel.send("Twitter link without needing twitter:\n" + newMessage);
+   }
 });
 
 client.on("interactionCreate", async (interaction) => {
