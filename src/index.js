@@ -15,7 +15,7 @@ client.once(Events.ClientReady, (c) => {
    console.log(`✅ Ready! Logged in as ${c.user.tag}`);
 });
 
-client.on("messageCreate", (message) => {
+client.on("messageCreate", async (message) => {
    if (message.author.bot) return;
 
    if (message.content?.toLowerCase() === "hello") {
@@ -26,9 +26,14 @@ client.on("messageCreate", (message) => {
       message.content?.includes("https://x.com") ||
       message.content?.includes("https://twitter.com")
    ) {
-      const twitterRegex = /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
-      const newMessage = message.content.replace(twitterRegex, "https://xcancel.com$3");
-      message.channel.send("Twitterless link:\n" + newMessage);
+      try {
+         const twitterRegex = /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
+         const newMessage = message.content.replace(twitterRegex, "https://xcancel.com$3");
+         await message.suppressEmbeds(true);
+         message.channel.send("Twitterless link:\n" + newMessage);
+      } catch (error) {
+         console.error("Failed to provide link", error);
+      }
    }
 });
 
