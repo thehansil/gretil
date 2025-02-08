@@ -28,7 +28,7 @@ client.on("messageCreate", (message) => {
    ) {
       const twitterRegex = /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
       const newMessage = message.content.replace(twitterRegex, "https://xcancel.com$3");
-      message.channel.send("Twitter link without needing twitter:\n" + newMessage);
+      message.channel.send("Twitterless link:\n" + newMessage);
    }
 });
 
