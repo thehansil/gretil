@@ -40,8 +40,8 @@ client.on("messageCreate", async (message) => {
 client.on("interactionCreate", async (interaction) => {
    if (!interaction.isChatInputCommand()) return;
    if (interaction.commandName === "update-channel-name") {
-      let newName = interaction.options.get("name").value;
-      let channelNum = interaction.options.get("number").value;
+      let newName = interaction.options.get("name").value as string;
+      let channelNum = interaction.options.get("number").value as number;
       let voiceChannels = client.guilds.cache
          .get(process.env.GUILD_ID)
          .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
@@ -53,24 +53,23 @@ client.on("interactionCreate", async (interaction) => {
          });
       }
    } else if (interaction.commandName === "update-channel-names") {
-      let newNames = interaction.options.get("names").value;
+      let newNames = interaction.options.get("names").value as string;
       if (newNames !== null && newNames.includes(",")) {
-         newNames = newNames.split(",");
+         let namesArray = newNames.split(",");
          let voiceChannels = client.guilds.cache
             .get(process.env.GUILD_ID)
             .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
-         if (newNames.length !== voiceChannels.size) {
+         if (namesArray.length !== voiceChannels.size) {
             interaction.reply({
-               content: "An incorrect number of channel names were provided",
+               content: "An incorrect number of channel names was provided",
                ephemeral: true,
             });
             return;
          }
-
-         voiceChannels = Array.from(voiceChannels.values());
-         for (let i = 0; i < voiceChannels.length; i++) {
-            voiceChannels[i].setName(newNames[i]);
-         }
+         
+         [...voiceChannels.values()].forEach( async (channel, index) => {
+            await channel.setName(namesArray[index]);
+          });
 
          interaction.reply({
             content: "Channel names updated!",
@@ -95,6 +94,13 @@ client.on("interactionCreate", async (interaction) => {
                   messages.filter((message) => message.author.id === process.env.CLIENT_ID)
                )
                .catch(console.error);
+            if (!messages) {
+               interaction.reply({
+                  content: "Failed to fetch the last thread in this channel.",
+                  ephemeral: true,
+               });
+               return;
+            }
             const lastMessage = messages.first();
 
             if (lastMessage) {
