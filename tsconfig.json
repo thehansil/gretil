@@ -1,12 +1,14 @@
 {
-   "compilerOptions": {
-      "outDir": "./dist",
-      "allowJs": true,
-      "target": "es6",
-      "module": "NodeNext",
-      "skipLibCheck": true,
-      "allowSyntheticDefaultImports": true
-   },
-   "include": ["./src/**/*"],
-   "exclude": ["node_modules", "dist"]
+  "compilerOptions": {
+    "outDir": "./dist",
+    "allowJs": true,
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true
+  },
+  "include": ["./src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

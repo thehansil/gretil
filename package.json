@@ -1,25 +1,29 @@
 {
-   "name": "gretil",
-   "version": "1.0.0",
-   "description": "",
-   "main": "src/index.ts",
-   "scripts": {
-      "test": "echo \"Error: no test specified\" && exit 1",
-      "start": "tsc && node ./dist/index.js",
-      "debug": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
-      "prod": "dotenvx run -f .env.production -- node src/index.ts",
-      "upload-commands": "node src/register-commands.js"
-   },
-   "keywords": [],
-   "author": "",
-   "license": "ISC",
-   "type": "commonjs",
-   "dependencies": {
-      "@dotenvx/dotenvx": "^1.24.0",
-      "discord.js": "^14.9.0"
-   },
-   "devDependencies": {
-      "ts-node": "^10.9.2",
-      "typescript": "^5.7.3"
-   }
+  "name": "gretil",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node ./dist/index.js",
+    "debug": "npx tsx watch ./src/index.ts",
+    "prod": "dotenvx run -f .env.production -- node src/index.ts",
+    "upload-commands": "node src/register-commands.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@dotenvx/dotenvx": "^1.24.0",
+    "discord.js": "^14.9.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.20.0",
+    "eslint": "^9.20.1",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.24.1"
+  }
 }
