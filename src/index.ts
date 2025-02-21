@@ -28,9 +28,12 @@ client.on("messageCreate", async (message) => {
    ) {
       try {
          const twitterRegex = /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
-         const newMessage = message.content.replace(twitterRegex, "https://xcancel.com$3");
-         await message.suppressEmbeds(true);
-         message.channel.send("Twitterless link:\n" + newMessage);
+         const matches = message.content.match(twitterRegex);
+         if (matches) {
+            const newLinks = matches.map(link => link.replace(twitterRegex, "https://xcancel.com$3"));
+            await message.suppressEmbeds(true);
+            await message.channel.send("Twitterless link:\n" + newLinks.join("\n"));
+         }
       } catch (error) {
          console.error("Failed to provide link", error);
       }
