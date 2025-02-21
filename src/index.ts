@@ -1,6 +1,9 @@
 import * as dotenv from "@dotenvx/dotenvx";
 dotenv.config();
-import { Client, Events, GatewayIntentBits, ChannelType } from "discord.js";
+import { Client, GatewayIntentBits, Collection } from "discord.js";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import fs from "node:fs";
 
 const client = new Client({
   intents: [
@@ -11,160 +14,46 @@ const client = new Client({
   ],
 });
 
-client.once(Events.ClientReady, (c) => {
-  console.log(`✅ Ready! Logged in as ${c.user.tag}`);
-});
+client.commands = new Collection();
 
-client.on("messageCreate", async (message) => {
-  if (message.author.bot) return;
+const foldersPath = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "commands"
+);
+const commandFiles = fs
+  .readdirSync(foldersPath)
+  .filter((f) => f.endsWith(".js") || f.endsWith(".ts"));
 
-  if (message.content?.toLowerCase() === "hello") {
-    message.reply("Hi!");
+for (const commandFile of commandFiles) {
+  const filePath = path.join(foldersPath, commandFile);
+  const { default: command } = await import(`./commands/${commandFile}`);
+
+  // Set a new item in the Collection with the key as the command name and the value as the exported module
+  if ("data" in command && "execute" in command) {
+    client.commands.set(command.data.name, command);
+  } else {
+    console.log(
+      `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+    );
   }
+}
 
-  if (
-    message.content?.includes("https://x.com") ||
-    message.content?.includes("https://twitter.com")
-  ) {
-    try {
-      const twitterRegex =
-        /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
-      const matches = message.content.match(twitterRegex);
-      if (matches) {
-        const newLinks = matches.map((link) =>
-          link.replace(twitterRegex, "https://xcancel.com$3")
-        );
-        await message.suppressEmbeds(true);
-        await message.channel.send("Twitterless link:\n" + newLinks.join("\n"));
-      }
-    } catch (error) {
-      console.error("Failed to provide link", error);
-    }
+const eventsPath = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "events"
+);
+const eventFiles = fs
+  .readdirSync(eventsPath)
+  .filter((file) => file.endsWith(".js") || file.endsWith(".ts"));
+
+for (const file of eventFiles) {
+  const filePath = path.join(eventsPath, file);
+  const { default: event } = await import(filePath);
+  if (event.once) {
+    client.once(event.name, (...args) => event.execute(...args));
+  } else {
+    client.on(event.name, (...args) => event.execute(...args));
   }
-});
-
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isChatInputCommand()) return;
-  if (interaction.commandName === "update-channel-name") {
-    const newName = interaction.options.get("name").value as string;
-    const channelNum = interaction.options.get("number").value as number;
-    const voiceChannels = client.guilds.cache
-      .get(process.env.GUILD_ID)
-      .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
-    if (newName !== null) {
-      voiceChannels.at(channelNum - 1).setName(newName);
-      interaction.reply({
-        content: "Channel name updated!",
-        ephemeral: true,
-      });
-    }
-  } else if (interaction.commandName === "update-channel-names") {
-    const newNames = interaction.options.get("names").value as string;
-    if (newNames !== null && newNames.includes(",")) {
-      const namesArray = newNames.split(",");
-      const voiceChannels = client.guilds.cache
-        .get(process.env.GUILD_ID)
-        .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
-      if (namesArray.length !== voiceChannels.size) {
-        interaction.reply({
-          content: "An incorrect number of channel names was provided",
-          ephemeral: true,
-        });
-        return;
-      }
-
-      [...voiceChannels.values()].forEach(async (channel, index) => {
-        await channel.setName(namesArray[index]);
-      });
-
-      interaction.reply({
-        content: "Channel names updated!",
-        ephemeral: true,
-      });
-    } else {
-      interaction.reply({
-        content: "The channel names given need to have a ',' between each name",
-        ephemeral: true,
-      });
-    }
-  } else if (interaction.commandName === "tog-new") {
-    //make sure this was sent in the right channel
-    if (interaction.channel.name === "tog") {
-      //find what the last chapter was by viewing last message
-      const channel = interaction.channel;
-      try {
-        // Fetch the last message in the channel
-        const messages = await channel.messages
-          .fetch()
-          .then((messages) =>
-            messages.filter(
-              (message) => message.author.id === process.env.CLIENT_ID
-            )
-          )
-          .catch(console.error);
-        if (!messages) {
-          interaction.reply({
-            content: "Failed to fetch the last thread in this channel.",
-            ephemeral: true,
-          });
-          return;
-        }
-        const lastMessage = messages.first();
-
-        if (lastMessage) {
-          //[season 2] Ep. 121 won't work, but #312 will
-          //array of all numbers found
-          const numbers = lastMessage.content.match(/\d+/g);
-          if (numbers) {
-            const nextChapter = Number(numbers[0]) + 1;
-            const reply = await interaction.reply({
-              content: `Chapter #${nextChapter} Discussion Thread 🔔`,
-              fetchReply: true,
-            });
-
-            //Start a thread and add a comment
-            const thread = await reply.startThread({
-              name: `Chapter #${nextChapter} Discussion Thread`,
-              autoArchiveDuration: 10080,
-              reason: "Starting a thread for discussion",
-            });
-
-            await thread.send("What a chapter...");
-          } else {
-            interaction.reply({
-              content:
-                "There was an issue finding the chapter # in the previous message",
-              ephemeral: true,
-            });
-          }
-        } else {
-          const reply = await interaction.reply({
-            content: "Chapter #1 Discussion Thread 🔔",
-            fetchReply: true,
-          });
-
-          const thread = await reply.startThread({
-            name: "Chapter #1 Discussion Thread",
-            autoArchiveDuration: 10080,
-            reason: "Starting a thread for discussion",
-          });
-          await thread.send("What a chapter...");
-        }
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-        interaction.reply({
-          content: "Failed to fetch the last message in this channel.",
-          ephemeral: true,
-        });
-      }
-    } else {
-      interaction.reply({
-        content:
-          "This is not the right channel for this command. Please send in #tog",
-        ephemeral: true,
-      });
-    }
-  }
-});
+}
 
 client.login(process.env.TOKEN);
