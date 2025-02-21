@@ -7,8 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "tsc && node ./dist/index.js",
     "debug": "npx tsx watch ./src/index.ts",
-    "prod": "dotenvx run -f .env.production -- node src/index.ts",
-    "upload-commands": "node src/register-commands.js"
+    "prod": "tsc && dotenvx run -f .env.production -- node ./dist/index.js",
+    "register-commands": "node ./dist/register-commands.js"
   },
   "keywords": [],
   "author": "",
