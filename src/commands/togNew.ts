@@ -3,7 +3,7 @@ import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
 const command = {
   data: new SlashCommandBuilder()
     .setName("tog-new")
-    .setDescription("Update the names of all voice channels"),
+    .setDescription("Create a new chapter discussion thread for Tower of God"),
   async execute(interaction: ChatInputCommandInteraction) {
     //make sure this was sent in the right channel
     if (interaction.channel.name === "tog") {
