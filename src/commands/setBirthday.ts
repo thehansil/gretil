@@ -37,8 +37,8 @@ const command = {
     }
 
     // fix the month and day to be 2 digits if they aren't already
-    //month = month.length === 1 ? `0${month}` : month;
-    //day = day.length === 1 ? `0${day}` : day;
+    month = month.length === 1 ? `0${month}` : month;
+    day = day.length === 1 ? `0${day}` : day;
 
     try {
       await mongoose.connect(process.env.MONGODB_URI);

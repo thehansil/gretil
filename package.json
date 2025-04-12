@@ -9,7 +9,7 @@
     "debug": "npx tsx watch ./src/index.ts",
     "prod": "tsc && dotenvx run -f .env.production -- node ./dist/index.js",
     "prod-commands": "tsc && dotenvx run -f .env.production -- node ./dist/register-commands.js",
-    "register-commands": "node ./dist/register-commands.js",
+    "register-commands": "tsc && node ./dist/register-commands.js",
     "build": "docker build -t hansil/gretil . && docker tag hansil/gretil:latest hansil/gretil:latest",
     "push": "docker login && docker push hansil/gretil:latest"
   },
@@ -20,7 +20,8 @@
   "dependencies": {
     "@dotenvx/dotenvx": "^1.24.0",
     "discord.js": "^14.9.0",
-    "mongoose": "^8.13.2"
+    "mongoose": "^8.13.2",
+    "node-cron": "^3.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.20.0",
