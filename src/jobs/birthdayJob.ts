@@ -19,7 +19,7 @@ export default function startDailyBirthdayJob(client: Client) {
         return;
       }
       const channel = (await client.channels.fetch(
-        process.env.GENERAL_CHANNEL_ID
+        process.env.BIRTHDAY_CHANNEL_ID
       )) as TextChannel;
       const guild = client.guilds.cache.get(process.env.GUILD_ID);
 
