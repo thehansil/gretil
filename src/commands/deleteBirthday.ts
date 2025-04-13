@@ -23,6 +23,8 @@ const command = {
           "There was an error removing your birthday. Please try again later.",
         ephemeral: true,
       });
+    } finally {
+      mongoose.connection.close();
     }
   },
 };

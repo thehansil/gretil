@@ -69,6 +69,8 @@ const command = {
           "There was an error saving your birthday. Please try again later.",
         ephemeral: true,
       });
+    } finally {
+      mongoose.connection.close();
     }
   },
 };
