@@ -21,6 +21,13 @@ const command = {
     let month = interaction.options.get("month").value as string;
     let day = interaction.options.get("day").value as string;
 
+    if (isNaN(Number(month)) || isNaN(Number(day))) {
+      await interaction.reply({
+        content: "Please enter valid numbers for month and day.",
+        ephemeral: true,
+      });
+      return;
+    }
     if (Number(month) < 1 || Number(month) > 12) {
       await interaction.reply({
         content: "Please enter a valid month (1-12)",
