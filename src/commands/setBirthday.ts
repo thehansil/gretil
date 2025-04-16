@@ -43,9 +43,9 @@ const command = {
       return;
     }
 
-    // fix the month and day to be 2 digits if they aren't already
-    month = month.length === 1 ? `0${month}` : month;
-    day = day.length === 1 ? `0${day}` : day;
+    // if the user enters leading zeros, remove them
+    month = month.replace(/^0+/, "");
+    day = day.replace(/^0+/, "");
 
     try {
       await mongoose.connect(process.env.MONGODB_URI);
