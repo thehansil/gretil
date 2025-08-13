@@ -14,8 +14,6 @@ const command = {
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
-    //const client = interaction.client;
-
     //get input
     const userId = interaction.user.id;
     let month = interaction.options.get("month").value as string;
