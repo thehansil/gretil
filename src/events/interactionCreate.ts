@@ -1,4 +1,6 @@
 import { Events, Interaction } from "discord.js";
+import mongoose from "mongoose";
+import Reminder from "../models/Reminder.js";
 
 const event = {
   name: Events.InteractionCreate,
@@ -11,6 +13,34 @@ const event = {
       return;
 
     if (interaction.isModalSubmit()) {
+      if (interaction.customId.startsWith("remindModal-")) {
+        const messageId = interaction.customId.split("-")[1];
+        const userId = interaction.user.id;
+        const channelId = interaction.channelId;
+        const timeInput = interaction.fields.getTextInputValue("remindTime");
+        // parse timeInput → schedule reminder
+
+        try {
+          await mongoose.connect(process.env.MONGODB_URI);
+          await Reminder.create({
+            userId: userId,
+            messageId: messageId,
+            channelId: channelId,
+            remindAt: new Date(Date.now() + 1 * 60 * 1000),
+          });
+          await interaction.reply({
+            content: `✅ Got it! I’ll DM you the reminder.`,
+            ephemeral: true,
+          });
+        } catch (error) {
+          await interaction.reply({
+            content: `There was an error setting up your reminder. Please try again later. \n ${error}`,
+            ephemeral: true,
+          });
+        } finally {
+          mongoose.connection.close();
+        }
+      }
       return;
     }
 
