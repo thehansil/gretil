@@ -3,7 +3,16 @@ import { Events, Interaction } from "discord.js";
 const event = {
   name: Events.InteractionCreate,
   async execute(interaction: Interaction) {
-    if (!interaction.isChatInputCommand()) return;
+    if (
+      !interaction.isChatInputCommand() &&
+      !interaction.isMessageContextMenuCommand() &&
+      !interaction.isModalSubmit()
+    )
+      return;
+
+    if (interaction.isModalSubmit()) {
+      return;
+    }
 
     const command = interaction.client.commands.get(interaction.commandName);
 
