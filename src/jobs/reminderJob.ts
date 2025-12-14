@@ -38,7 +38,7 @@ export default function startReminderJob(client: Client) {
         }
       }
     } catch (error) {
-      console.error("Error fetching birthdays:", error);
+      console.error("Error retreiving or sending reminder:", error);
     } finally {
       mongoose.connection.close();
     }

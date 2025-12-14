@@ -1,4 +1,5 @@
 import { Events, Interaction } from "discord.js";
+import * as chrono from "chrono-node";
 import mongoose from "mongoose";
 import Reminder from "../models/Reminder.js";
 
@@ -18,7 +19,26 @@ const event = {
         const userId = interaction.user.id;
         const channelId = interaction.channelId;
         const timeInput = interaction.fields.getTextInputValue("remindTime");
-        // parse timeInput → schedule reminder
+
+        const time = chrono.parseDate(timeInput, new Date(), {
+          forwardDate: true,
+        });
+
+        if (!time) {
+          await interaction.reply({
+            content: `❌ I couldn't understand the time you provided. Please try again with a different format.`,
+            ephemeral: true,
+          });
+          return;
+        }
+
+        if (time < new Date()) {
+          await interaction.reply({
+            content: `❌ The time you provided is in the past. Please provide a future time for the reminder.`,
+            ephemeral: true,
+          });
+          return;
+        }
 
         try {
           await mongoose.connect(process.env.MONGODB_URI);
@@ -26,10 +46,10 @@ const event = {
             userId: userId,
             messageId: messageId,
             channelId: channelId,
-            remindAt: new Date(Date.now() + 1 * 60 * 1000),
+            remindAt: time,
           });
           await interaction.reply({
-            content: `✅ Got it! I’ll DM you the reminder.`,
+            content: `✅ Got it! I'll DM you the reminder.`,
             ephemeral: true,
           });
         } catch (error) {
