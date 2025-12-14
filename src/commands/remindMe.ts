@@ -24,7 +24,9 @@ const command = {
       .setCustomId("remindTime")
       .setLabel("When should I remind you?")
       .setStyle(TextInputStyle.Short)
-      .setPlaceholder("e.g., 10m, 2h, 2025-10-18 15:00")
+      .setPlaceholder(
+        "e.g., Tomorrow at 3pm, in 2 hours, next Monday, January 5th at 2pm"
+      )
       .setRequired(true);
 
     const row = new ActionRowBuilder<TextInputBuilder>();
