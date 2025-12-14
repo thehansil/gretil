@@ -18,7 +18,10 @@ export default function startReminderJob(client: Client) {
             reminder.channelId
           )) as GuildTextBasedChannel;
           const message = await channel?.messages.fetch(reminder.messageId);
-          if (!message) continue;
+          if (!message) {
+            await Reminder.deleteOne({ _id: reminder._id });
+            continue;
+          }
           const embed = new EmbedBuilder()
             .setAuthor({
               name: message.author.tag,

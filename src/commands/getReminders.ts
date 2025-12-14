@@ -30,13 +30,25 @@ const command = {
         reminders[0].channelId
       )) as GuildTextBasedChannel;
 
+      if (!channel) {
+        return "⚠️ Channel no longer exists";
+      }
+
       const reminderList = (
         await Promise.all(
           reminders.map(async (reminder, index) => {
-            const message = await channel.messages.fetch(reminder.messageId);
-            return `${index + 1}. ${
-              message.url
-            } | Remind At: ${reminder.remindAt.toLocaleString()}`;
+            try {
+              const message = await channel.messages.fetch(reminder.messageId);
+              return `${index + 1}. Message: ${
+                message.url
+              } | Remind At: ${reminder.remindAt.toLocaleString()}`;
+            } catch (error) {
+              // Message was deleted or inaccessible
+              console.error(error);
+              return `${
+                index + 1
+              }. Message: ❌ Deleted | Remind At: ${reminder.remindAt.toLocaleString()}`;
+            }
           })
         )
       ).join("\n");
