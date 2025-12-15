@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import mongoose from "mongoose";
 import Birthday from "../models/Birthday.js";
+import { connectDB } from "../helpers/dbInitialize.js";
 
 const command = {
   data: new SlashCommandBuilder()
@@ -14,6 +14,7 @@ const command = {
     ),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    await connectDB();
     //get input
     const userId = interaction.user.id;
     let month = interaction.options.get("month").value as string;
@@ -46,7 +47,6 @@ const command = {
     day = day.replace(/^0+/, "");
 
     try {
-      await mongoose.connect(process.env.MONGODB_URI);
       const existingRecord = await Birthday.findOne({ userId });
       if (existingRecord) {
         existingRecord.month = month;
@@ -74,8 +74,6 @@ const command = {
           "There was an error saving your birthday. Please try again later.",
         ephemeral: true,
       });
-    } finally {
-      mongoose.connection.close();
     }
   },
 };

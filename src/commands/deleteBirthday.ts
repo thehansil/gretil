@@ -1,6 +1,6 @@
 import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
-import mongoose from "mongoose";
 import Birthday from "../models/Birthday.js";
+import { connectDB } from "../helpers/dbInitialize.js";
 
 const command = {
   data: new SlashCommandBuilder()
@@ -8,9 +8,9 @@ const command = {
     .setDescription("Remove your birthday"),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    await connectDB();
     const userId = interaction.user.id;
     try {
-      await mongoose.connect(process.env.MONGODB_URI);
       await Birthday.deleteOne({ userId });
       await interaction.reply({
         content: "Your birthday has been removed.",
@@ -23,8 +23,6 @@ const command = {
           "There was an error removing your birthday. Please try again later.",
         ephemeral: true,
       });
-    } finally {
-      mongoose.connection.close();
     }
   },
 };

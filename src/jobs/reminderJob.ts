@@ -1,12 +1,10 @@
 import cron from "node-cron";
-import mongoose from "mongoose";
 import { Client, EmbedBuilder, GuildTextBasedChannel } from "discord.js";
 import Reminder from "../models/Reminder.js";
 
 export default function startReminderJob(client: Client) {
   cron.schedule("* * * * *", async () => {
     try {
-      await mongoose.connect(process.env.MONGODB_URI);
       const reminders = await Reminder.find({ remindAt: { $lte: new Date() } });
 
       for (const reminder of reminders) {
@@ -42,8 +40,6 @@ export default function startReminderJob(client: Client) {
       }
     } catch (error) {
       console.error("Error retreiving or sending reminder:", error);
-    } finally {
-      mongoose.connection.close();
     }
   });
 }

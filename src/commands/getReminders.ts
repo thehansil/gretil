@@ -3,8 +3,8 @@ import {
   GuildTextBasedChannel,
   SlashCommandBuilder,
 } from "discord.js";
-import mongoose from "mongoose";
 import Reminder from "../models/Reminder.js";
+import { connectDB } from "../helpers/dbInitialize.js";
 
 const command = {
   data: new SlashCommandBuilder()
@@ -12,9 +12,9 @@ const command = {
     .setDescription("Retrieve your upcoming reminders"),
 
   async execute(interaction: ChatInputCommandInteraction) {
+    await connectDB();
     const userId = interaction.user.id;
     try {
-      await mongoose.connect(process.env.MONGODB_URI);
       const reminders = await Reminder.find({ userId }).sort({ remindAt: 1 });
 
       if (reminders.length === 0) {
@@ -64,8 +64,6 @@ const command = {
           "There was an error retrieving your reminders. Please try again later.",
         ephemeral: true,
       });
-    } finally {
-      mongoose.connection.close();
     }
   },
 };

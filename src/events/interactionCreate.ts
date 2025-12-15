@@ -1,7 +1,7 @@
 import { Events, Interaction } from "discord.js";
 import * as chrono from "chrono-node";
-import mongoose from "mongoose";
 import Reminder from "../models/Reminder.js";
+import { connectDB } from "../helpers/dbInitialize.js";
 
 const event = {
   name: Events.InteractionCreate,
@@ -12,6 +12,8 @@ const event = {
       !interaction.isModalSubmit()
     )
       return;
+
+    await connectDB();
 
     if (interaction.isModalSubmit()) {
       if (interaction.customId.startsWith("remindModal-")) {
@@ -41,7 +43,6 @@ const event = {
         }
 
         try {
-          await mongoose.connect(process.env.MONGODB_URI);
           await Reminder.create({
             userId: userId,
             messageId: messageId,
@@ -57,8 +58,6 @@ const event = {
             content: `There was an error setting up your reminder. Please try again later. \n ${error}`,
             ephemeral: true,
           });
-        } finally {
-          mongoose.connection.close();
         }
       }
       return;
