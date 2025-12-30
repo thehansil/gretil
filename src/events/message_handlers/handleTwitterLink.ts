@@ -1,4 +1,6 @@
-export default async function handleTwitterLink(message) {
+import { Message } from "discord.js";
+
+export default async function handleTwitterLink(message: Message) {
   try {
     const twitterRegex =
       /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
