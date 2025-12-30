@@ -1,4 +1,8 @@
-export default async function handleComplimentSelect(interaction) {
+import { StringSelectMenuInteraction } from "discord.js";
+
+export default async function handleComplimentSelect(
+  interaction: StringSelectMenuInteraction
+) {
   const type = interaction.values[0];
 
   const compliments = {

@@ -2,13 +2,14 @@ import {
   SlashCommandBuilder,
   ActionRowBuilder,
   StringSelectMenuBuilder,
+  ChatInputCommandInteraction,
 } from "discord.js";
 
 export const data = new SlashCommandBuilder()
   .setName("compliment")
   .setDescription("Get a compliment");
 
-export async function execute(interaction) {
+export async function execute(interaction: ChatInputCommandInteraction) {
   const menu = new StringSelectMenuBuilder()
     .setCustomId("compliment")
     .setPlaceholder("Choose a compliment type")
@@ -37,7 +38,9 @@ export async function execute(interaction) {
 
   await interaction.reply({
     content: "What kind of compliment would you like?",
-    components: [new ActionRowBuilder().addComponents(menu)],
+    components: [
+      new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(menu),
+    ],
     ephemeral: true,
   });
 }
