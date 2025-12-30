@@ -1,7 +1,7 @@
 import { Events, Interaction } from "discord.js";
-import * as chrono from "chrono-node";
-import Reminder from "../models/Reminder.js";
 import { connectDB } from "../helpers/dbInitialize.js";
+import handleRemindModal from "./interaction_handlers/handleRemindModal.js";
+import handleComplimentSelect from "./interaction_handlers/handleComplimentSelect.js";
 
 const event = {
   name: Events.InteractionCreate,
@@ -18,82 +18,14 @@ const event = {
 
     if (interaction.isModalSubmit()) {
       if (interaction.customId.startsWith("remindModal-")) {
-        const messageId = interaction.customId.split("-")[1];
-        const userId = interaction.user.id;
-        const channelId = interaction.channelId;
-        const timeInput = interaction.fields.getTextInputValue("remindTime");
-
-        const time = chrono.parseDate(timeInput, new Date(), {
-          forwardDate: true,
-        });
-
-        if (!time) {
-          await interaction.reply({
-            content: `❌ I couldn't understand the time you provided. Please try again with a different format.`,
-            ephemeral: true,
-          });
-          return;
-        }
-
-        if (time < new Date()) {
-          await interaction.reply({
-            content: `❌ The time you provided is in the past. Please provide a future time for the reminder.`,
-            ephemeral: true,
-          });
-          return;
-        }
-
-        try {
-          await Reminder.create({
-            userId: userId,
-            messageId: messageId,
-            channelId: channelId,
-            remindAt: time,
-          });
-          await interaction.reply({
-            content: `✅ Got it! I'll DM you the reminder.`,
-            ephemeral: true,
-          });
-        } catch (error) {
-          await interaction.reply({
-            content: `There was an error setting up your reminder. Please try again later. \n ${error}`,
-            ephemeral: true,
-          });
-        }
+        await handleRemindModal(interaction);
       }
       return;
     }
 
     if (interaction.isStringSelectMenu()) {
       if (interaction.customId === "compliment") {
-        const type = interaction.values[0];
-
-        const compliments = {
-          physical: [
-            "You have a great sense of style.",
-            "You carry yourself with confidence.",
-          ],
-          intelligence: [
-            "You pick things up incredibly fast.",
-            "You have a sharp, analytical mind.",
-          ],
-          personality: [
-            "People feel comfortable around you.",
-            "You bring positive energy wherever you go.",
-          ],
-        };
-
-        const pool =
-          type === "random"
-            ? Object.values(compliments).flat()
-            : compliments[type];
-
-        const compliment = pool[Math.floor(Math.random() * pool.length)];
-
-        await interaction.update({
-          content: `💖 **Compliment for you:**\n${compliment}`,
-          components: [],
-        });
+        await handleComplimentSelect(interaction);
       }
       return;
     }
