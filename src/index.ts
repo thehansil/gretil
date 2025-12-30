@@ -22,17 +22,30 @@ const foldersPath = path.join(
 );
 const commandFiles = fs
   .readdirSync(foldersPath)
-  .filter((f) => f.endsWith(".js") || f.endsWith(".ts"));
+  .filter(
+    (f) =>
+      (f.endsWith(".ts") || f.endsWith(".js")) &&
+      !f.endsWith(".js.map") &&
+      !f.endsWith(".d.ts")
+  );
 
 for (const commandFile of commandFiles) {
   const filePath = path.join(foldersPath, commandFile);
-  const { default: command } = await import(`./commands/${commandFile}`);
+  let imported;
+  try {
+    imported = await import(`file://${filePath}`);
+  } catch (err) {
+    console.error(`[ERROR] Failed to import ${commandFile}:`, err);
+    continue;
+  }
+
+  const command = imported.default ?? imported;
 
   // Set a new item in the Collection with the key as the command name and the value as the exported module
-  if ("data" in command && "execute" in command) {
+  if (command?.data && command?.execute) {
     client.commands.set(command.data.name, command);
   } else {
-    console.log(
+    console.warn(
       `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
     );
   }

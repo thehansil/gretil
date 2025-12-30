@@ -65,7 +65,7 @@ const event = {
     }
 
     if (interaction.isStringSelectMenu()) {
-      if (interaction.customId === "compliment_type") {
+      if (interaction.customId === "compliment") {
         const type = interaction.values[0];
 
         const compliments = {
@@ -94,8 +94,6 @@ const event = {
           content: `💖 **Compliment for you:**\n${compliment}`,
           components: [],
         });
-
-        return;
       }
       return;
     }

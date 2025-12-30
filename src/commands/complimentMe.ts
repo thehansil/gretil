@@ -10,7 +10,7 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(interaction) {
   const menu = new StringSelectMenuBuilder()
-    .setCustomId("compliment_type")
+    .setCustomId("compliment")
     .setPlaceholder("Choose a compliment type")
     .addOptions([
       {

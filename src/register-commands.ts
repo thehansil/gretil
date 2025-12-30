@@ -12,15 +12,25 @@ const foldersPath = path.join(
 );
 const commandFiles = fs
   .readdirSync(foldersPath)
-  .filter((f) => f.endsWith(".js") || f.endsWith(".ts"));
+  .filter(
+    (f) => f.endsWith(".js") && !f.endsWith(".js.map") && !f.endsWith(".d.ts")
+  );
 
 for (const file of commandFiles) {
   const filePath = path.join(foldersPath, file);
-  const { default: command } = await import(`${filePath}`);
-  if ("data" in command && "execute" in command) {
+
+  let imported;
+  try {
+    imported = await import(`file://${filePath}`);
+  } catch (err) {
+    console.error(`[ERROR] Failed to import ${file}:`, err);
+    continue;
+  }
+  const command = imported.default ?? imported;
+  if (command?.data && command?.execute) {
     commands.push(command.data.toJSON());
   } else {
-    console.log(
+    console.warn(
       `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
     );
   }
