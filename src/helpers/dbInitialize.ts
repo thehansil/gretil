@@ -6,9 +6,7 @@ export async function connectDB() {
   }
 
   if (mongoose.connection.readyState === mongoose.ConnectionStates.connecting) {
-    await new Promise((resolve) =>
-      mongoose.connection.once("connected", resolve)
-    );
+    await mongoose.connection.asPromise();
     return;
   }
 
