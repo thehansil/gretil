@@ -26,6 +26,7 @@ const event = {
             `Could not find channel for event ${newEvent.name} (ID: ${newEvent.id})`
           );
         }
+        await Event.deleteOne({ eventId: newEvent.id });
       } else if (oldEvent.name !== newEvent.name) {
         const eventDoc = await Event.findOne({ eventId: newEvent.id });
 

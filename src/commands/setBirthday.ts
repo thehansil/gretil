@@ -15,7 +15,7 @@ const command = {
 
   async execute(interaction: ChatInputCommandInteraction) {
     await connectDB();
-    //get input
+
     const userId = interaction.user.id;
     let month = interaction.options.get("month").value as string;
     let day = interaction.options.get("day").value as string;
