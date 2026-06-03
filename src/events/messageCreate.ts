@@ -21,7 +21,8 @@ const event = {
           const newLinks = matches.map((link) =>
             link.replace(twitterRegex, "https://xcancel.com$3")
           );
-          await message.suppressEmbeds(true);
+          // xcancel isn't showing embeds right now
+          // await message.suppressEmbeds(true);
           await message.channel.send(
             "Twitterless link:\n" + newLinks.join("\n")
           );
