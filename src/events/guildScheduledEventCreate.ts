@@ -12,6 +12,10 @@ const event = {
   name: Events.GuildScheduledEventCreate,
   async execute(event: GuildScheduledEvent) {
     try {
+      if (!event.guild) {
+        console.error("Event has no guild associated with it");
+        return;
+      }
       const creator = event.creatorId
         ? await event.guild.members.fetch(event.creatorId).catch(() => null)
         : null;

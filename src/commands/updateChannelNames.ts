@@ -13,12 +13,20 @@ const command = {
     ),
   async execute(interaction: ChatInputCommandInteraction) {
     const client = interaction.client;
-    const newNames = interaction.options.get("names").value as string;
+    const newNames = interaction?.options.get("names")?.value as string;
     if (newNames !== null && newNames.includes(",")) {
       const namesArray = newNames.split(",");
-      const voiceChannels = client.guilds.cache
-        .get(process.env.GUILD_ID)
-        .channels.cache.filter((c) => c.type === ChannelType.GuildVoice);
+      const guild = client.guilds.cache.get(process.env.GUILD_ID!);
+      if (!guild) {
+        await interaction.reply({
+          content: "Guild not found or not configured properly",
+          ephemeral: true,
+        });
+        return;
+      }
+      const voiceChannels = guild.channels.cache.filter(
+        (c) => c.type === ChannelType.GuildVoice
+      );
       if (namesArray.length !== voiceChannels.size) {
         await interaction.reply({
           content: "An incorrect number of channel names was provided",

@@ -14,6 +14,13 @@ export default function startDailyBirthdayJob(client: Client) {
 }
 
 async function runBirthdayJob(client: Client) {
+  if (!process.env.BIRTHDAY_CHANNEL_ID || !process.env.GUILD_ID) {
+    console.error(
+      "Birthday channel ID or guild ID not set in environment variables. Birthday job will not run."
+    );
+    return;
+  }
+
   const today = new Date();
   const month = today.getMonth() + 1;
   const day = today.getDate();
@@ -31,7 +38,9 @@ async function runBirthdayJob(client: Client) {
     const guild = client.guilds.cache.get(process.env.GUILD_ID);
 
     for (const birthday of birthdays) {
-      const user = await guild.members.fetch(birthday.userId).catch(() => null);
+      const user = await guild?.members
+        .fetch(birthday.userId)
+        .catch(() => null);
       if (user) {
         console.log(`Sending birthday message to ${user.user.tag}`);
         await channel.send(`🎉 Happy Birthday, ${user}!  🎂🥳🎊🎁🍾`);

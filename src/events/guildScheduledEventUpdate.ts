@@ -11,11 +11,21 @@ const event = {
   async execute(oldEvent: GuildScheduledEvent, newEvent: GuildScheduledEvent) {
     try {
       await connectDB();
+      if (!newEvent.guild) {
+        console.error("Updated event has no guild associated with it");
+        return;
+      }
       if (
         oldEvent.status !== GuildScheduledEventStatus.Completed &&
         newEvent.status === GuildScheduledEventStatus.Completed
       ) {
         const event = await Event.findOne({ eventId: newEvent.id });
+        if (!event) {
+          console.error(
+            `Could not find database entry for completed event ${newEvent.name} (ID: ${newEvent.id})`
+          );
+          return;
+        }
         const channel = await newEvent.guild.channels
           .fetch(event.eventChannelId)
           .catch(() => null);

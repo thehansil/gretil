@@ -7,6 +7,13 @@ export default async function logError(
 ) {
   console.error(message, error);
 
+  if (!process.env.ADMIN_CHANNEL_ID || !process.env.ADMIN_USER_ID) {
+    console.error(
+      "Admin channel ID or user ID not set in environment variables. Cannot log error to Discord."
+    );
+    return;
+  }
+
   const errorMessage = error?.message || "No message available";
   const errorStack = error?.stack
     ? `\n\nStack Trace:\n\`\`\`\n${error.stack}\n\`\`\``

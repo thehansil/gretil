@@ -7,7 +7,7 @@ const event = {
   name: Events.ClientReady,
   once: true,
   async execute(client: Client) {
-    console.log(`✅ Ready! Logged in as ${client.user.tag}`);
+    console.log(`✅ Ready! Logged in as ${client.user?.tag}`);
     try {
       await connectDB();
       startDailyBirthdayJob(client);

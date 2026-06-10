@@ -33,13 +33,16 @@ const event = {
     }
 
     if (message.content?.toLowerCase().includes("onion")) {
-      const user = await message.guild.members
+      if (!process.env.ONION_HATER_ID) {
+        return;
+      }
+      const user = await message.guild?.members
         .fetch(process.env.ONION_HATER_ID)
         .catch(() => null);
       if (!user) return;
       await message.react("🧅");
       const randomNumber = Math.floor(Math.random() * 3) + 1;
-      let response: string;
+      let response = "";
       switch (randomNumber) {
         case 1:
           response = `🚨🚨 Onion alert level RED! Paging ${user}`;

@@ -16,6 +16,11 @@ const event = {
         return;
       }
 
+      if (!event.guild) {
+        console.error("Event has no guild associated with it");
+        return;
+      }
+
       const channel = await event.guild.channels
         .fetch(eventDoc.eventChannelId)
         .catch(() => null);
