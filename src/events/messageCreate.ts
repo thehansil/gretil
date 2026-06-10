@@ -1,5 +1,11 @@
 import { Events, Message } from "discord.js";
 
+// Cooldown tracking for onion mentions (1 hour = 3600000 ms)
+const ONION_COOLDOWN_MS = process.env.ONION_COOLDOWN_MS
+  ? parseInt(process.env.ONION_COOLDOWN_MS)
+  : 3600000;
+const onionCooldowns = new Map<string, number>();
+
 const event = {
   name: Events.MessageCreate,
   async execute(message: Message) {
@@ -33,6 +39,12 @@ const event = {
     }
 
     if (message.content?.toLowerCase().includes("onion")) {
+      const now = Date.now();
+      const lastTrigger = onionCooldowns.get(message.channelId);
+      if (lastTrigger && now - lastTrigger < ONION_COOLDOWN_MS) {
+        return;
+      }
+
       if (!process.env.ONION_HATER_ID) {
         return;
       }
@@ -40,6 +52,9 @@ const event = {
         .fetch(process.env.ONION_HATER_ID)
         .catch(() => null);
       if (!user) return;
+
+      onionCooldowns.set(message.channelId, now);
+
       await message.react("🧅");
       const randomNumber = Math.floor(Math.random() * 3) + 1;
       let response = "";
