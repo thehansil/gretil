@@ -10,8 +10,8 @@
     "prod": "tsc && dotenvx run -f .env.production -- node ./dist/index.js",
     "prod-commands": "tsc && dotenvx run -f .env.production -- node ./dist/register-commands.js",
     "register-commands": "tsc && node ./dist/register-commands.js",
-    "build": "docker build --platform linux/amd64 -t hansil/gretil .",
-    "push": "docker push hansil/gretil:latest"
+    "docker-build": "docker build --platform linux/amd64 -t hansil/gretil .",
+    "docker-push": "docker push hansil/gretil:latest"
   },
   "keywords": [],
   "author": "",

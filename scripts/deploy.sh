@@ -17,7 +17,7 @@ docker run \
     --name "$NEW_CONTAINER_NAME" \
     --restart unless-stopped \
     --network naswork \
-    --env-file /mnt/user/appdata/gretil/.env \
+    --env-file /config/.env \
     "$IMAGE_NAME:latest"
 
 echo "Waiting for container to start..."
