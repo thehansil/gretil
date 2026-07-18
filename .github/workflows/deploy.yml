@@ -20,6 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Debug workspace
+        run: |
+          pwd
+          ls -la
+
       - name: Register Discord commands
         run: |
           docker run --rm \
