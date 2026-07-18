@@ -8,8 +8,8 @@
     "start": "tsc && node ./dist/index.js",
     "debug": "npx tsx watch ./src/index.ts",
     "prod": "tsc && dotenvx run -f .env.production -- node ./dist/index.js",
-    "prod-commands": "tsc && dotenvx run -f .env.production -- node ./dist/register-commands.js",
-    "register-commands": "tsc && node ./dist/register-commands.js",
+    "register-prod-commands": "dotenvx run -f .env.production -- tsx src/register-commands.ts",
+    "register-commands": "tsx src/register-commands.ts",
     "docker-build": "docker build --platform linux/amd64 -t hansil/gretil .",
     "docker-push": "docker push hansil/gretil:latest"
   },
