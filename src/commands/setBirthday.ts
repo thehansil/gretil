@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from "discord.js";
 import Birthday from "../models/Birthday.js";
 import { connectDB } from "../helpers/dbInitialize.js";
 
@@ -23,21 +27,21 @@ const command = {
     if (isNaN(Number(month)) || isNaN(Number(day))) {
       await interaction.reply({
         content: "Please enter valid numbers for month and day.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
     if (Number(month) < 1 || Number(month) > 12) {
       await interaction.reply({
         content: "Please enter a valid month (1-12)",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
     if (Number(day) < 1 || Number(day) > 31) {
       await interaction.reply({
         content: "Please enter a valid day (1-31)",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
       return;
     }
@@ -54,7 +58,7 @@ const command = {
         await existingRecord.save();
         await interaction.reply({
           content: "Your birthday has been updated!",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       } else {
         await Birthday.create({
@@ -64,7 +68,7 @@ const command = {
         });
         await interaction.reply({
           content: "Your birthday has been saved!",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
       }
     } catch (error) {
@@ -72,7 +76,7 @@ const command = {
       await interaction.reply({
         content:
           "There was an error saving your birthday. Please try again later.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

@@ -29,7 +29,7 @@ export default async function logError(
   }
 
   const channel = await client.channels.fetch(process.env.ADMIN_CHANNEL_ID);
-  if (channel?.isTextBased()) {
+  if (channel?.isSendable()) {
     await channel.send(content);
   }
 }

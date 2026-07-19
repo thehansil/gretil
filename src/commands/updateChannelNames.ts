@@ -1,6 +1,7 @@
 import {
   ChannelType,
   ChatInputCommandInteraction,
+  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js";
 
@@ -20,7 +21,7 @@ const command = {
       if (!guild) {
         await interaction.reply({
           content: "Guild not found or not configured properly",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         return;
       }
@@ -30,7 +31,7 @@ const command = {
       if (namesArray.length !== voiceChannels.size) {
         await interaction.reply({
           content: "An incorrect number of channel names was provided",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         return;
       }
@@ -41,12 +42,12 @@ const command = {
 
       interaction.reply({
         content: "Channel names updated!",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } else {
       interaction.reply({
         content: "The channel names given need to have a ',' between each name",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

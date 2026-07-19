@@ -1,6 +1,7 @@
 import {
   ChatInputCommandInteraction,
   GuildTextBasedChannel,
+  MessageFlags,
   SlashCommandBuilder,
 } from "discord.js";
 import Reminder from "../models/Reminder.js";
@@ -20,7 +21,7 @@ const command = {
       if (reminders.length === 0) {
         await interaction.reply({
           content: "You have no upcoming reminders.",
-          ephemeral: true,
+          flags: MessageFlags.Ephemeral,
         });
         return;
       }
@@ -55,14 +56,14 @@ const command = {
 
       await interaction.reply({
         content: `Here are your upcoming reminders:\n${reminderList}`,
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } catch (error) {
       console.error("Error retrieving reminders:", error);
       await interaction.reply({
         content:
           "There was an error retrieving your reminders. Please try again later.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },

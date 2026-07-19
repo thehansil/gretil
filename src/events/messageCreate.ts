@@ -20,6 +20,7 @@ const event = {
       message.content?.includes("https://twitter.com")
     ) {
       try {
+        if (!message.channel.isSendable()) return;
         const twitterRegex =
           /https?:\/\/(www\.)?(twitter\.com|x\.com)([^?\s]+)(\?[^\s]*)?/gi;
         const matches = message.content.match(twitterRegex);
@@ -38,6 +39,7 @@ const event = {
     }
 
     if (message.content?.toLowerCase().includes("onion")) {
+      if (!message.channel.isSendable()) return;
       const now = Date.now();
       const lastTrigger = onionCooldowns.get(message.channelId);
       if (lastTrigger && now - lastTrigger < ONION_COOLDOWN_MS) {

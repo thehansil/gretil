@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from "discord.js";
 import Birthday from "../models/Birthday.js";
 import { connectDB } from "../helpers/dbInitialize.js";
 
@@ -14,14 +18,14 @@ const command = {
       await Birthday.deleteOne({ userId });
       await interaction.reply({
         content: "Your birthday has been removed.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     } catch (error) {
       console.error("Error removing birthday:", error);
       await interaction.reply({
         content:
           "There was an error removing your birthday. Please try again later.",
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
       });
     }
   },
