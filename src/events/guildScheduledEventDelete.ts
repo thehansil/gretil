@@ -1,5 +1,6 @@
 import { Events, GuildScheduledEvent } from "discord.js";
 import { connectDB } from "../helpers/dbInitialize.js";
+import logError from "../helpers/logError.js";
 import Event from "../models/Event.js";
 
 const event = {
@@ -10,14 +11,22 @@ const event = {
       const eventDoc = await Event.findOne({ eventId: event.id });
 
       if (!eventDoc) {
-        console.error(
-          `Could not find database entry for deleted event ${event.name} (ID: ${event.id})`
+        await logError(
+          event.client,
+          new Error(
+            `Could not find database entry for deleted event ${event.name} (ID: ${event.id})`
+          ),
+          "Guild scheduled event delete error."
         );
         return;
       }
 
       if (!event.guild) {
-        console.error("Event has no guild associated with it");
+        await logError(
+          event.client,
+          new Error("Event has no guild associated with it"),
+          "Guild scheduled event delete error."
+        );
         return;
       }
 
@@ -31,7 +40,11 @@ const event = {
 
       await Event.deleteOne({ eventId: event.id });
     } catch (error) {
-      console.error("Something went wrong:", error);
+      await logError(
+        event.client,
+        error,
+        "Something went wrong deleting event."
+      );
     }
   },
 };

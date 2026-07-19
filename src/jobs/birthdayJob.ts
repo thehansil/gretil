@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import Birthday from "../models/Birthday.js";
 import { Client, TextChannel } from "discord.js";
+import logError from "../helpers/logError.js";
 
 export default function startDailyBirthdayJob(client: Client) {
   runBirthdayJob(client);
@@ -15,8 +16,12 @@ export default function startDailyBirthdayJob(client: Client) {
 
 async function runBirthdayJob(client: Client) {
   if (!process.env.BIRTHDAY_CHANNEL_ID || !process.env.GUILD_ID) {
-    console.error(
-      "Birthday channel ID or guild ID not set in environment variables. Birthday job will not run."
+    await logError(
+      client,
+      new Error(
+        "Birthday channel ID or guild ID not set in environment variables. Birthday job will not run."
+      ),
+      "Birthday job configuration error."
     );
     return;
   }
@@ -47,6 +52,6 @@ async function runBirthdayJob(client: Client) {
       }
     }
   } catch (error) {
-    console.error("Error fetching birthdays:", error);
+    await logError(client, error, "Error fetching birthdays.");
   }
 }

@@ -5,6 +5,7 @@ import {
 } from "discord.js";
 import Birthday from "../models/Birthday.js";
 import { connectDB } from "../helpers/dbInitialize.js";
+import logError from "../helpers/logError.js";
 
 const command = {
   data: new SlashCommandBuilder()
@@ -21,7 +22,7 @@ const command = {
         flags: MessageFlags.Ephemeral,
       });
     } catch (error) {
-      console.error("Error removing birthday:", error);
+      await logError(interaction.client, error, "Error removing birthday.");
       await interaction.reply({
         content:
           "There was an error removing your birthday. Please try again later.",

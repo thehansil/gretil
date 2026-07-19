@@ -2,6 +2,7 @@ import { Events, Interaction, MessageFlags } from "discord.js";
 import * as chrono from "chrono-node";
 import Reminder from "../models/Reminder.js";
 import { connectDB } from "../helpers/dbInitialize.js";
+import logError from "../helpers/logError.js";
 
 const event = {
   name: Events.InteractionCreate,
@@ -58,6 +59,7 @@ const event = {
             content: `There was an error setting up your reminder. Please try again later. \n ${error}`,
             flags: MessageFlags.Ephemeral,
           });
+          await logError(interaction.client, error, "Error creating reminder.");
         }
       }
       return;
@@ -66,8 +68,10 @@ const event = {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) {
-      console.error(
-        `No command matching ${interaction.commandName} was found.`
+      await logError(
+        interaction.client,
+        new Error(`No command matching ${interaction.commandName} was found.`),
+        "Command not found."
       );
       return;
     }
@@ -75,7 +79,7 @@ const event = {
     try {
       await command.execute(interaction);
     } catch (error) {
-      console.error(error);
+      await logError(interaction.client, error, "Error executing command.");
       if (interaction.replied || interaction.deferred) {
         await interaction.followUp({
           content: "There was an error while executing this command!",

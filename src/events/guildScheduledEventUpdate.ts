@@ -4,6 +4,7 @@ import {
   GuildScheduledEventStatus,
 } from "discord.js";
 import { connectDB } from "../helpers/dbInitialize.js";
+import logError from "../helpers/logError.js";
 import Event from "../models/Event.js";
 
 const event = {
@@ -12,7 +13,11 @@ const event = {
     try {
       await connectDB();
       if (!newEvent.guild) {
-        console.error("Updated event has no guild associated with it");
+        await logError(
+          newEvent.client,
+          new Error("Updated event has no guild associated with it"),
+          "Guild scheduled event update error."
+        );
         return;
       }
       if (
@@ -21,8 +26,12 @@ const event = {
       ) {
         const event = await Event.findOne({ eventId: newEvent.id });
         if (!event) {
-          console.error(
-            `Could not find database entry for completed event ${newEvent.name} (ID: ${newEvent.id})`
+          await logError(
+            newEvent.client,
+            new Error(
+              `Could not find database entry for completed event ${newEvent.name} (ID: ${newEvent.id})`
+            ),
+            "Guild scheduled event update error."
           );
           return;
         }
@@ -32,8 +41,12 @@ const event = {
         if (channel) {
           await channel.delete().catch(() => {});
         } else {
-          console.error(
-            `Could not find channel for event ${newEvent.name} (ID: ${newEvent.id})`
+          await logError(
+            newEvent.client,
+            new Error(
+              `Could not find channel for event ${newEvent.name} (ID: ${newEvent.id})`
+            ),
+            "Guild scheduled event update error."
           );
         }
         await Event.deleteOne({ eventId: newEvent.id });
@@ -41,8 +54,12 @@ const event = {
         const eventDoc = await Event.findOne({ eventId: newEvent.id });
 
         if (!eventDoc) {
-          console.error(
-            `Could not find database entry for event ${newEvent.name} (ID: ${newEvent.id})`
+          await logError(
+            newEvent.client,
+            new Error(
+              `Could not find database entry for event ${newEvent.name} (ID: ${newEvent.id})`
+            ),
+            "Guild scheduled event update error."
           );
           return;
         }
@@ -52,17 +69,25 @@ const event = {
           .catch(() => null);
 
         if (!eventChannel) {
-          console.error(
-            `Could not find channel for event ${newEvent.name} (ID: ${newEvent.id})`
+          await logError(
+            newEvent.client,
+            new Error(
+              `Could not find channel for event ${newEvent.name} (ID: ${newEvent.id})`
+            ),
+            "Guild scheduled event update error."
           );
           return;
         }
 
         await eventChannel
           .edit({ name: newEvent.name.toLowerCase().replace(/\s+/g, "-") })
-          .catch(() => {
-            console.error(
-              `Failed to update channel name for event ${newEvent.name} (ID: ${newEvent.id})`
+          .catch(async () => {
+            await logError(
+              newEvent.client,
+              new Error(
+                `Failed to update channel name for event ${newEvent.name} (ID: ${newEvent.id})`
+              ),
+              "Guild scheduled event update error."
             );
           });
 
@@ -70,7 +95,11 @@ const event = {
         await eventDoc.save();
       }
     } catch (error) {
-      console.error("Something went wrong updating event:", error);
+      await logError(
+        newEvent.client,
+        error,
+        "Something went wrong updating event."
+      );
     }
   },
 };

@@ -1,4 +1,5 @@
 import { Events, Message } from "discord.js";
+import logError from "../helpers/logError.js";
 
 // Cooldown tracking for onion mentions (1 hour = 3600000 ms)
 const ONION_COOLDOWN_MS = process.env.ONION_COOLDOWN_MS
@@ -34,7 +35,7 @@ const event = {
           );
         }
       } catch (error) {
-        console.error("Failed to provide link", error);
+        await logError(message.client, error, "Failed to provide link.");
       }
     }
 

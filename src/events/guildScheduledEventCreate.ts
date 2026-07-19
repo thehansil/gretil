@@ -6,6 +6,7 @@ import {
   PermissionsBitField,
 } from "discord.js";
 import { connectDB } from "../helpers/dbInitialize.js";
+import logError from "../helpers/logError.js";
 import Event from "../models/Event.js";
 
 const event = {
@@ -13,7 +14,11 @@ const event = {
   async execute(event: GuildScheduledEvent) {
     try {
       if (!event.guild) {
-        console.error("Event has no guild associated with it");
+        await logError(
+          event.client,
+          new Error("Event has no guild associated with it"),
+          "Guild scheduled event create error."
+        );
         return;
       }
       const creator = event.creatorId
@@ -21,8 +26,12 @@ const event = {
         : null;
 
       if (!creator) {
-        console.error(
-          `Could not fetch creator for event ${event.name} (ID: ${event.id})`
+        await logError(
+          event.client,
+          new Error(
+            `Could not fetch creator for event ${event.name} (ID: ${event.id})`
+          ),
+          "Guild scheduled event create error."
         );
         return;
       }
@@ -52,7 +61,11 @@ const event = {
       });
 
       if (!eventChannel) {
-        console.error("Failed to create event channel");
+        await logError(
+          event.client,
+          new Error("Failed to create event channel"),
+          "Guild scheduled event create error."
+        );
         return;
       }
 
@@ -64,7 +77,11 @@ const event = {
         eventChannelId: eventChannel.id,
       });
     } catch (error) {
-      console.error("Something went wrong creating event:", error);
+      await logError(
+        event.client,
+        error,
+        "Something went wrong creating event."
+      );
     }
   },
 };

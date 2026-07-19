@@ -2,6 +2,7 @@ import { Client, Events } from "discord.js";
 import startDailyBirthdayJob from "../jobs/birthdayJob.js";
 import startReminderJob from "../jobs/reminderJob.js";
 import { connectDB } from "../helpers/dbInitialize.js";
+import logError from "../helpers/logError.js";
 
 const event = {
   name: Events.ClientReady,
@@ -13,7 +14,7 @@ const event = {
       startDailyBirthdayJob(client);
       startReminderJob(client);
     } catch (error) {
-      console.error("Failed to initialize database:", error);
+      await logError(client, error, "Failed to initialize database.");
     }
   },
 };

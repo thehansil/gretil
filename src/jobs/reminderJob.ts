@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { Client, EmbedBuilder, GuildTextBasedChannel } from "discord.js";
 import Reminder from "../models/Reminder.js";
+import logError from "../helpers/logError.js";
 
 export default function startReminderJob(client: Client) {
   cron.schedule("* * * * *", async () => {
@@ -39,7 +40,7 @@ export default function startReminderJob(client: Client) {
         }
       }
     } catch (error) {
-      console.error("Error retreiving or sending reminder:", error);
+      await logError(client, error, "Error retrieving or sending reminder.");
     }
   });
 }
