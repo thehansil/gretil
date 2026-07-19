@@ -31,7 +31,7 @@ jobs:
           npm ci
           npm run register-commands
         env:
-          TOKEN: ${{ secrets.DISCORD_TOKEN }}
+          TOKEN: ${{ secrets.TOKEN }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           GUILD_ID: ${{ secrets.GUILD_ID }}
 
