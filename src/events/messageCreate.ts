@@ -13,7 +13,7 @@ const event = {
     if (message.author.bot) return;
 
     if (message.content?.toLowerCase() === "hello") {
-      message.reply("Hi!");
+      await message.reply("Hi!");
     }
 
     if (
@@ -41,37 +41,44 @@ const event = {
 
     if (message.content?.toLowerCase().includes("onion")) {
       if (!message.channel.isSendable()) return;
-      const now = Date.now();
-      const lastTrigger = onionCooldowns.get(message.channelId);
-      if (lastTrigger && now - lastTrigger < ONION_COOLDOWN_MS) {
-        return;
-      }
+      try {
+        const now = Date.now();
+        const lastTrigger = onionCooldowns.get(message.channelId);
+        if (lastTrigger && now - lastTrigger < ONION_COOLDOWN_MS) {
+          return;
+        }
 
-      if (!process.env.ONION_HATER_ID) {
-        return;
-      }
-      const user = await message.guild?.members
-        .fetch(process.env.ONION_HATER_ID)
-        .catch(() => null);
-      if (!user) return;
+        if (!process.env.ONION_HATER_ID) {
+          return;
+        }
+        const user = await message.guild?.members.fetch(
+          process.env.ONION_HATER_ID
+        );
 
-      onionCooldowns.set(message.channelId, now);
+        onionCooldowns.set(message.channelId, now);
 
-      await message.react("🧅");
-      const randomNumber = Math.floor(Math.random() * 3) + 1;
-      let response = "";
-      switch (randomNumber) {
-        case 1:
-          response = `🚨🚨 Onion alert level RED! Paging ${user}`;
-          break;
-        case 2:
-          response = `🧅Onions🧅 have entered the chat. ${user}`;
-          break;
-        case 3:
-          response = `👀 Did someone just say… onions? ${user} is NOT going to like this.`;
-          break;
+        await message.react("🧅");
+        const randomNumber = Math.floor(Math.random() * 3) + 1;
+        let response = "";
+        switch (randomNumber) {
+          case 1:
+            response = `🚨🚨 Onion alert level RED! Paging ${user?.toString()}`;
+            break;
+          case 2:
+            response = `🧅Onions🧅 have entered the chat. ${user?.toString()}`;
+            break;
+          case 3:
+            response = `👀 Did someone just say… onions? ${user?.toString()} is NOT going to like this.`;
+            break;
+        }
+        await message.channel.send(response);
+      } catch (error) {
+        await logError(
+          message.client,
+          error,
+          "Failed to handle onion mention."
+        );
       }
-      await message.channel.send(response);
     }
   },
 };

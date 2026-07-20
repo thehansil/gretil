@@ -13,11 +13,10 @@ const command = {
       option.setName("names").setDescription("Channel names").setRequired(true)
     ),
   async execute(interaction: ChatInputCommandInteraction) {
-    const client = interaction.client;
     const newNames = interaction?.options.get("names")?.value as string;
     if (newNames !== null && newNames.includes(",")) {
       const namesArray = newNames.split(",");
-      const guild = client.guilds.cache.get(process.env.GUILD_ID!);
+      const guild = interaction.guild;
       if (!guild) {
         await interaction.reply({
           content: "Guild not found or not configured properly",
@@ -25,8 +24,9 @@ const command = {
         });
         return;
       }
-      const voiceChannels = guild.channels.cache.filter(
-        (c) => c.type === ChannelType.GuildVoice
+      const fetchedChannels = await guild.channels.fetch();
+      const voiceChannels = fetchedChannels?.filter(
+        (c) => c?.type === ChannelType.GuildVoice
       );
       if (namesArray.length !== voiceChannels.size) {
         await interaction.reply({
@@ -36,16 +36,18 @@ const command = {
         return;
       }
 
-      [...voiceChannels.values()].forEach(async (channel, index) => {
-        await channel.setName(namesArray[index]);
-      });
+      await Promise.all(
+        [...voiceChannels.values()].map((channel, index) =>
+          channel.setName(namesArray[index])
+        )
+      );
 
-      interaction.reply({
+      await interaction.reply({
         content: "Channel names updated!",
         flags: MessageFlags.Ephemeral,
       });
     } else {
-      interaction.reply({
+      await interaction.reply({
         content: "The channel names given need to have a ',' between each name",
         flags: MessageFlags.Ephemeral,
       });

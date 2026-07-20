@@ -5,6 +5,7 @@
   "main": "src/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src --ext .ts",
     "start": "tsc && node ./dist/index.js",
     "debug": "npx tsx watch ./src/index.ts",
     "prod": "tsc && dotenvx run -f .env.production -- node ./dist/index.js",

@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import { Command } from "./config.js";
+import { Command } from "./Command.ts";
 
 declare module "discord.js" {
   interface Client {

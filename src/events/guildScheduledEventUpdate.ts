@@ -35,9 +35,9 @@ const event = {
           );
           return;
         }
-        const channel = await newEvent.guild.channels
-          .fetch(event.eventChannelId)
-          .catch(() => null);
+        const channel = await newEvent.guild.channels.fetch(
+          event.eventChannelId
+        );
         if (channel) {
           await channel.delete().catch(() => {});
         } else {
@@ -64,9 +64,9 @@ const event = {
           return;
         }
 
-        const eventChannel = await newEvent.guild.channels
-          .fetch(eventDoc.eventChannelId)
-          .catch(() => null);
+        const eventChannel = await newEvent.guild.channels.fetch(
+          eventDoc.eventChannelId
+        );
 
         if (!eventChannel) {
           await logError(

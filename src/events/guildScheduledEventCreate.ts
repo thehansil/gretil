@@ -22,7 +22,7 @@ const event = {
         return;
       }
       const creator = event.creatorId
-        ? await event.guild.members.fetch(event.creatorId).catch(() => null)
+        ? await event.guild.members.fetch(event.creatorId)
         : null;
 
       if (!creator) {
@@ -49,9 +49,13 @@ const event = {
         },
       ];
 
-      const category = event.guild.channels.cache.find(
-        (c) => c.name === "Events" && c.type === ChannelType.GuildCategory
+      const channels = await event.guild.channels.fetch();
+
+      const category = channels.find(
+        (c) => c?.name === "Events" && c.type === ChannelType.GuildCategory
       );
+
+      await connectDB();
 
       const eventChannel = await event.guild.channels.create({
         name: event.name.toLowerCase().replace(/\s+/g, "-"),
@@ -59,17 +63,6 @@ const event = {
         permissionOverwrites: overwrites,
         parent: category?.id,
       });
-
-      if (!eventChannel) {
-        await logError(
-          event.client,
-          new Error("Failed to create event channel"),
-          "Guild scheduled event create error."
-        );
-        return;
-      }
-
-      await connectDB();
 
       await Event.create({
         eventId: event.id,

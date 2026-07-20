@@ -30,9 +30,7 @@ const event = {
         return;
       }
 
-      const channel = await event.guild.channels
-        .fetch(eventDoc.eventChannelId)
-        .catch(() => null);
+      const channel = await event.guild.channels.fetch(eventDoc.eventChannelId);
 
       if (channel) {
         await channel.delete().catch(() => {});

@@ -14,7 +14,7 @@ const event = {
       startDailyBirthdayJob(client);
       startReminderJob(client);
     } catch (error) {
-      await logError(client, error, "Failed to initialize database.");
+      await logError(client, error, "Failed during startup initialization.");
     }
   },
 };
