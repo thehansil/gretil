@@ -34,14 +34,6 @@ for (const file of commandFiles) {
   const command = module.default;
 
   commands.push(command.data.toJSON());
-  // const { default: command } = await import(`${filePath}`);
-  // if ("data" in command && "execute" in command) {
-  //   commands.push(command.data.toJSON());
-  // } else {
-  //   console.log(
-  //     `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-  //   );
-  // }
 }
 
 const rest = new REST({ version: "10" }).setToken(token);
