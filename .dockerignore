@@ -3,7 +3,10 @@ node_modules/
 .env.*
 .DS_Store
 dist/
+.git/
 .gitignore
-.git
+.vscode/
+*.log
 .prettierrc
 eslint.config.mjs
+README*
