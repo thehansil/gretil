@@ -55,10 +55,7 @@ export default async function logError(
       .addFields(fields)
       .setTimestamp();
 
-    const mention = `<@${ADMIN_USER_ID}>`;
-
     await channel.send({
-      content: mention,
       embeds: [embed],
     });
   } catch (loggingError) {

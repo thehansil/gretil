@@ -1,4 +1,4 @@
-import { Events, Message } from "discord.js";
+import { Events, Message, MessageFlags } from "discord.js";
 import logError from "../helpers/logError.js";
 
 // Cooldown tracking for onion mentions (1 hour = 3600000 ms)
@@ -29,10 +29,10 @@ const event = {
           const newLinks = matches.map((link) =>
             link.replace(twitterRegex, "https://xcancel.com$3")
           );
-          await message.suppressEmbeds(true);
-          await message.channel.send(
-            "Twitterless link:\n" + newLinks.join("\n")
-          );
+          await message.channel.send({
+            content: "Twitterless link:\n" + newLinks.join("\n"),
+            flags: MessageFlags.SuppressEmbeds,
+          });
         }
       } catch (error) {
         await logError(message.client, error, "Failed to provide link.");
