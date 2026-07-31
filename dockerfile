@@ -5,5 +5,4 @@ RUN npm install
 RUN npm install -g typescript
 COPY . .
 RUN npx tsc
-RUN node dist/register-commands.js
 CMD ["node", "dist/index.js"]
