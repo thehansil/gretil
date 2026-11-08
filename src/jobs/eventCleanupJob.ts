@@ -1,10 +1,10 @@
 import cron from "node-cron";
-import { Client, DiscordAPIError } from "discord.js";
+import { Client, DiscordAPIError, GuildScheduledEventStatus } from "discord.js";
 import Event from "../models/Event.js";
 import logError from "../helpers/logError.js";
 
 export default function startEventCleanupJob(client: Client) {
-  cron.schedule("0 0 * * *", async () => await runEventCleanupJob(client));
+  cron.schedule("* * * * *", async () => await runEventCleanupJob(client));
 }
 
 export async function runEventCleanupJob(client: Client) {
@@ -17,6 +17,13 @@ export async function runEventCleanupJob(client: Client) {
     const events = await Event.find();
     for (const event of events) {
       try {
+        if (
+          event.status !== GuildScheduledEventStatus.Completed &&
+          event.status !== GuildScheduledEventStatus.Canceled
+        ) {
+          continue;
+        }
+
         const channel = await client.channels.fetch(event.eventChannelId);
         if (!channel?.isTextBased()) {
           await Event.deleteOne({ _id: event._id });
@@ -30,15 +37,10 @@ export async function runEventCleanupJob(client: Client) {
           continue;
         }
         const lastMessageDate = lastMessage.createdAt;
-        const daysSinceLastMessage =
-          (today.getTime() - lastMessageDate.getTime()) / (1000 * 3600 * 24);
-        if (daysSinceLastMessage > 7) {
-          try {
-            await channel.delete();
-          } catch (error) {
-            await logError(client, error, "Error deleting event channel.");
-            continue;
-          }
+        const minutesSinceLastMessage =
+          (today.getTime() - lastMessageDate.getTime()) / (1000 * 60);
+        if (minutesSinceLastMessage > 2) {
+          await channel.delete();
           await Event.deleteOne({ _id: event._id });
         }
       } catch (error) {
@@ -49,7 +51,7 @@ export async function runEventCleanupJob(client: Client) {
             await logError(
               client,
               deleteError,
-              "Error deleting orphaned event record."
+              "Error cleaning orphaned event."
             );
           }
           continue;

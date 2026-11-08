@@ -1,11 +1,21 @@
 import mongoose from "mongoose";
+import { GuildScheduledEventStatus } from "discord.js";
+
 const { Schema, model } = mongoose;
 
-const eventSchema = new Schema({
+interface IEvent {
+  eventId: string;
+  eventName: string;
+  eventChannelId: string;
+  status?: GuildScheduledEventStatus;
+}
+
+const eventSchema = new Schema<IEvent>({
   eventId: { type: String, required: true },
   eventName: { type: String, required: true },
   eventChannelId: { type: String, required: true },
+  status: { type: Number },
 });
 
-const Event = model("Event", eventSchema);
+const Event = model<IEvent>("Event", eventSchema);
 export default Event;

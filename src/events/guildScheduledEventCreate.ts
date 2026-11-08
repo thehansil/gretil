@@ -33,6 +33,7 @@ const event = {
         eventId: event.id,
         eventName: event.name,
         eventChannelId: eventChannel.id,
+        status: event.status,
       });
     } catch (error) {
       await logError(

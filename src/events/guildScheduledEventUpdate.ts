@@ -77,6 +77,10 @@ const event = {
       if (newEvent.name !== oldEvent.name) {
         await handleRenamedEvent(oldEvent, newEvent);
       }
+      await Event.updateOne(
+        { eventId: newEvent.id },
+        { status: newEvent.status }
+      );
     } catch (error) {
       await logError(
         newEvent.client,
