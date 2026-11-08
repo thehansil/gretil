@@ -4,7 +4,7 @@ import Event from "../models/Event.js";
 import logError from "../helpers/logError.js";
 
 export default function startEventCleanupJob(client: Client) {
-  cron.schedule("* * * * *", async () => await runEventCleanupJob(client));
+  cron.schedule("0 0 * * *", async () => await runEventCleanupJob(client));
 }
 
 export async function runEventCleanupJob(client: Client) {
@@ -27,6 +27,9 @@ export async function runEventCleanupJob(client: Client) {
         const channel = await client.channels.fetch(event.eventChannelId);
         if (!channel?.isTextBased()) {
           await Event.deleteOne({ _id: event._id });
+          console.log(
+            `Cleaned event ${event.eventName} (ID: ${event.eventId}).`
+          );
           continue;
         }
         const lastMessage = (
@@ -34,19 +37,28 @@ export async function runEventCleanupJob(client: Client) {
         ).first();
         if (!lastMessage) {
           await Event.deleteOne({ _id: event._id });
+          console.log(
+            `Cleaned event ${event.eventName} (ID: ${event.eventId}).`
+          );
           continue;
         }
         const lastMessageDate = lastMessage.createdAt;
-        const minutesSinceLastMessage =
-          (today.getTime() - lastMessageDate.getTime()) / (1000 * 60);
-        if (minutesSinceLastMessage > 2) {
+        const daysSinceLastMessage =
+          (today.getTime() - lastMessageDate.getTime()) / (1000 * 3600 * 24);
+        if (daysSinceLastMessage > 7) {
           await channel.delete();
           await Event.deleteOne({ _id: event._id });
+          console.log(
+            `Cleaned event ${event.eventName} (ID: ${event.eventId}).`
+          );
         }
       } catch (error) {
         if (error instanceof DiscordAPIError && error.code === 10003) {
           try {
             await Event.deleteOne({ _id: event._id });
+            console.log(
+              `Cleaned event ${event.eventName} (ID: ${event.eventId}).`
+            );
           } catch (deleteError) {
             await logError(
               client,
