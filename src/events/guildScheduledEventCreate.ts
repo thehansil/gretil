@@ -1,11 +1,5 @@
-import {
-  ChannelType,
-  Events,
-  GuildScheduledEvent,
-  OverwriteType,
-  PermissionsBitField,
-} from "discord.js";
-import { connectDB } from "../helpers/dbInitialize.js";
+import { ChannelType, Events, GuildScheduledEvent } from "discord.js";
+import connectDB from "../helpers/dbInitialize.js";
 import logError from "../helpers/logError.js";
 import Event from "../models/Event.js";
 
@@ -13,6 +7,7 @@ const event = {
   name: Events.GuildScheduledEventCreate,
   async execute(event: GuildScheduledEvent) {
     try {
+      await connectDB();
       if (!event.guild) {
         await logError(
           event.client,
@@ -21,33 +16,6 @@ const event = {
         );
         return;
       }
-      const creator = event.creatorId
-        ? await event.guild.members.fetch(event.creatorId)
-        : null;
-
-      if (!creator) {
-        await logError(
-          event.client,
-          new Error(
-            `Could not fetch creator for event ${event.name} (ID: ${event.id})`
-          ),
-          "Guild scheduled event create error."
-        );
-        return;
-      }
-
-      const overwrites = [
-        {
-          id: event.guild.roles.everyone.id,
-          type: OverwriteType.Role,
-          deny: [PermissionsBitField.Flags.ViewChannel],
-        },
-        {
-          id: creator.id,
-          type: OverwriteType.Member,
-          allow: [PermissionsBitField.Flags.ViewChannel],
-        },
-      ];
 
       const channels = await event.guild.channels.fetch();
 
@@ -55,12 +23,9 @@ const event = {
         (c) => c?.name === "Events" && c.type === ChannelType.GuildCategory
       );
 
-      await connectDB();
-
       const eventChannel = await event.guild.channels.create({
         name: event.name.toLowerCase().replace(/\s+/g, "-"),
         type: ChannelType.GuildText,
-        permissionOverwrites: overwrites,
         parent: category?.id,
       });
 

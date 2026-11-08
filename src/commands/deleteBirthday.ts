@@ -4,7 +4,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import Birthday from "../models/Birthday.js";
-import { connectDB } from "../helpers/dbInitialize.js";
+import connectDB from "../helpers/dbInitialize.js";
 import logError from "../helpers/logError.js";
 
 const command = {

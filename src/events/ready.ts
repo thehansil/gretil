@@ -1,7 +1,8 @@
 import { Client, Events } from "discord.js";
 import startDailyBirthdayJob from "../jobs/birthdayJob.js";
 import startReminderJob from "../jobs/reminderJob.js";
-import { connectDB } from "../helpers/dbInitialize.js";
+import startEventCleanupJob from "../jobs/eventCleanupJob.js";
+import connectDB from "../helpers/dbInitialize.js";
 import logError from "../helpers/logError.js";
 
 const event = {
@@ -13,6 +14,7 @@ const event = {
       await connectDB();
       startDailyBirthdayJob(client);
       startReminderJob(client);
+      startEventCleanupJob(client);
     } catch (error) {
       await logError(client, error, "Failed during startup initialization.");
     }

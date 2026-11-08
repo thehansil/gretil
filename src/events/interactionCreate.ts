@@ -1,5 +1,5 @@
 import { Events, Interaction, MessageFlags } from "discord.js";
-import { connectDB } from "../helpers/dbInitialize.js";
+import connectDB from "../helpers/dbInitialize.js";
 import logError from "../helpers/logError.js";
 import handleRemindModalSubmit from "./interaction-handlers/handleRemindModalSubmit.js";
 

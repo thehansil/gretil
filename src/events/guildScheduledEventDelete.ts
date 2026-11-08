@@ -1,5 +1,5 @@
 import { Events, GuildScheduledEvent } from "discord.js";
-import { connectDB } from "../helpers/dbInitialize.js";
+import connectDB from "../helpers/dbInitialize.js";
 import logError from "../helpers/logError.js";
 import Event from "../models/Event.js";
 
