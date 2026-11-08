@@ -1,40 +1,7 @@
-import {
-  Events,
-  GuildScheduledEvent,
-  GuildScheduledEventStatus,
-} from "discord.js";
+import { Events, GuildScheduledEvent } from "discord.js";
 import connectDB from "../helpers/dbInitialize.js";
 import logError from "../helpers/logError.js";
 import Event from "../models/Event.js";
-
-async function handleDeletedEvent(newEvent: GuildScheduledEvent) {
-  const event = await Event.findOne({ eventId: newEvent.id });
-  if (!event) {
-    await logError(
-      newEvent.client,
-      new Error(
-        `Could not find database entry for completed event ${newEvent.name} (ID: ${newEvent.id})`
-      ),
-      "Guild scheduled event update error."
-    );
-    return;
-  }
-
-  const channel = await newEvent.guild?.channels.fetch(event.eventChannelId);
-  if (channel) {
-    await channel.delete().catch(() => {});
-  } else {
-    await logError(
-      newEvent.client,
-      new Error(
-        `Could not find channel for event ${newEvent.name} (ID: ${newEvent.id})`
-      ),
-      "Guild scheduled event update error."
-    );
-  }
-
-  await Event.deleteOne({ eventId: newEvent.id });
-}
 
 async function handleRenamedEvent(
   oldEvent: GuildScheduledEvent,
@@ -107,14 +74,7 @@ const event = {
         );
         return;
       }
-      if (
-        oldEvent.status !== GuildScheduledEventStatus.Completed &&
-        newEvent.status === GuildScheduledEventStatus.Completed
-      ) {
-        // Temporarily disable delete. Instantly deleting removes continued
-        // commmunication after the event. Needs to be delayed or handled manually
-        // await handleDeletedEvent(newEvent);
-      } else {
+      if (newEvent.name !== oldEvent.name) {
         await handleRenamedEvent(oldEvent, newEvent);
       }
     } catch (error) {
