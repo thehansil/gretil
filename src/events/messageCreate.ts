@@ -1,6 +1,6 @@
 import { Events, Message } from "discord.js";
 import handleOnionMessage from "./message-handlers/handleOnionMessage.js";
-import handleTwitterLink from "./message-handlers/handleTwitterLink.js";
+// import handleTwitterLink from "./message-handlers/handleTwitterLink.js";
 
 const event = {
   name: Events.MessageCreate,
@@ -11,12 +11,13 @@ const event = {
       await message.reply("Hi!");
     }
 
-    if (
-      message.content?.includes("https://x.com") ||
-      message.content?.includes("https://twitter.com")
-    ) {
-      await handleTwitterLink(message);
-    }
+    // Disabled for now while nitter/xcancel is disabled
+    // if (
+    //   message.content?.includes("https://x.com") ||
+    //   message.content?.includes("https://twitter.com")
+    // ) {
+    //   await handleTwitterLink(message);
+    // }
 
     if (message.content?.toLowerCase().includes("onion")) {
       await handleOnionMessage(message);
